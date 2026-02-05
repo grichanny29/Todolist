@@ -1,25 +1,27 @@
 import { Task } from './commontypes';
 import { Button } from './Button';
-import { FilterValuesType } from './commontypes';
+import { FilterValuesType,TodolistType } from './commontypes';
 import { useState } from 'react';
 
 type TodolistPropsType = {
+  todolistId:TodolistType['id'];
   title: string;
   tasks: Task[];
   filter: FilterValuesType;
-  createTask: (title: Task['title']) => void;
-  deleteTask: (taskId: Task['id']) => void;
-  changeTodolistFilter: (nextFilterValue: FilterValuesType) => void;
-  changeTasksStatus: (
-    taskId: Task['id'],
-    newTasksStatus: Task['isDone']
-  ) => void;
+  deleteTodolist:(todolistId:TodolistType['id'])=> void;
+  createTask: (title: Task['title'],todolistId:TodolistType['id']) => void;
+  deleteTask: (taskId: Task['id'],todolistId:TodolistType['id']) => void;
+  changeTodolistFilter: (nextFilterValue: FilterValuesType,todolistId:TodolistType['id']) => void;
+  changeTasksStatus: ( taskId: Task['id'],  newTasksStatus: Task['isDone'],todolistId:TodolistType['id'] ) => void;
+
 };
 
 export const TodolistItem = ({
+todolistId,
   title,
   tasks,
   filter,
+  deleteTodolist,
   deleteTask,
   changeTodolistFilter,
   createTask,
@@ -39,12 +41,12 @@ export const TodolistItem = ({
               <input
                 type="checkbox"
                 onChange={(e) =>
-                  changeTasksStatus(task.id, e.currentTarget.checked)
+                  changeTasksStatus(task.id, e.currentTarget.checked,todolistId)
                 }
                 checked={task.isDone}
               />
               <span>{task.title}</span>
-              <Button title="x" onClick={() => deleteTask(task.id)} />
+              <Button title="x" onClick={() => deleteTask(task.id,todolistId)} />
             </li>
           );
         })}
@@ -54,7 +56,7 @@ export const TodolistItem = ({
   const createTaskHandler = () => {
     const trimmedTitle = taskInput.trim();
     if (trimmedTitle) {
-      createTask(taskInput);
+      createTask(taskInput,todolistId);
     } else setError(true);
     setTaskInput('');
   };
@@ -108,17 +110,17 @@ export const TodolistItem = ({
         <Button
           title="Все"
           className={filter === 'all' ? 'btn-filter-active' : ''}
-          onClick={() => changeTodolistFilter('all')}
+          onClick={() => changeTodolistFilter('all',todolistId)}
         />
         <Button
           title="В работе"
           className={filter === 'active' ? 'btn-filter-active' : ''}
-          onClick={() => changeTodolistFilter('active')}
+          onClick={() => changeTodolistFilter('active',todolistId)}
         />
         <Button
           title="Сделано"
           className={filter === 'completed' ? 'btn-filter-active' : ''}
-          onClick={() => changeTodolistFilter('completed')}
+          onClick={() => changeTodolistFilter('completed',todolistId)}
         />
       </div>
     </div>
